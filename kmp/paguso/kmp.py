@@ -42,7 +42,7 @@ def init_next(pat):
             else:
                 B[i+j]=B[j]
         if B[j]==-1 and pat[0]!=pat[i+j]:
-            B[i+j]=0
+            B[i+1]=0
         i += j-B[j]
         j = max(0, B[j])
     return B
