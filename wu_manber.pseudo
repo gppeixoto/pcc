@@ -1,0 +1,29 @@
+Algoritmo Wu_Manber
+Entrada: T=t1,...,tn; P=p1,...,pn; r >= 0; E = {sig1,...,sig_e}
+Saida: A(T,P,r)
+
+inicio
+    A <- {}
+    C = (C^sig1, ..., C^sig_e) <- char_mask(p, E) # identico ao shift-or
+    msb_mask <- 2^(m-1)                 # 100..00 (size m)
+    
+    s[0] <- 11..1 (size m)
+    para q <- 1..r faça
+        s[q] <- s[q-1] << 1
+
+    para j <- 1..n faça:
+        s' <- s[0]
+        s[0] <- (s[0] << 1) | C^T[j]    # shift-or
+        para q <- 1..r faça:
+            s" <- s[q]
+            s[q] <- (s[q] << 1 | C^T[j])# (a)
+                    & (s' << 1)         # (b) s' = s^(j-1, q-1)
+                    & (s[q-1] << 1)     # (c) 
+                    & s'
+            s' <- s"
+        se s[r] & msb_mask = 0 então:
+            A <- A U {j}
+    retorna A
+fim
+
+

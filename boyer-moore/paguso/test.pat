@@ -1,0 +1,3 @@
+abra
+dilma
+inflacao
