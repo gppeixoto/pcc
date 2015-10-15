@@ -82,7 +82,9 @@ int main(int argc, char** argv){
 				run_kmp(txt, pat);
 			}
 		}else if(patterns.size() > 1){//aho
-
+			for(string &txt : textfiles){
+				run_aho(txt, patterns);
+			}
 		}else{
 			//error
 		}
