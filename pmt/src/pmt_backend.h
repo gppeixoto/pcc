@@ -16,6 +16,8 @@
 #include <sys/types.h>
 #include <assert.h>
 
+#include <glob.h>
+
 #define FAIL 0
 #define START 1
 #define MIN_CHAR 32

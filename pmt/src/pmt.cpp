@@ -1,5 +1,17 @@
 #include "pmt_backend.h"
 
+
+inline vector<string> getTextFiles(const string& pat){
+    glob_t glob_result;
+    glob(pat.c_str(),GLOB_TILDE,NULL,&glob_result);
+    vector<string> ret;
+    for(unsigned int i=0;i<glob_result.gl_pathc;++i){
+        ret.push_back(string(glob_result.gl_pathv[i]));
+    }
+    globfree(&glob_result);
+    return ret;
+}
+
 int main(int argc, char** argv){
 	int c;
 	bool has_edit_option = false;
@@ -68,11 +80,10 @@ int main(int argc, char** argv){
 
     for (int i = count_option_num+1; i < argc; i++){
 		string str = argv[i];
-		//TODO handle wildcards
-		//vector<string> matches = handle_wildcard(str);
-		//for(string &match : matches){
-			textfiles.push_back(str);
-		//}
+		vector<string> files = getTextFiles(str);
+		for(string &file : files){
+			textfiles.push_back(file);
+		}
 	}
 
 	if(!has_edit_option || max_error == 0){//exact search
