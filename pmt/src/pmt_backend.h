@@ -30,5 +30,6 @@
 using namespace std;
 
 void run_kmp(string &txtfile, string &pattern);
+void run_sellers(string &txtfile, string &pattern, int maxError);
 
 #endif

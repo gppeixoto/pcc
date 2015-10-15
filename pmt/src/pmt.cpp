@@ -62,12 +62,13 @@ int main(int argc, char** argv){
 		}
     }
 
-    if(argc -1 <= count_option_num){
+    if(argc - 1 <= count_option_num){
     	cout << "Insira 1 ou mais arquivos de texto" << endl;
     }
 
     for (int i = count_option_num+1; i < argc; i++){
 		string str = argv[i];
+		//TODO handle wildcards
 		//vector<string> matches = handle_wildcard(str);
 		//for(string &match : matches){
 			textfiles.push_back(str);
@@ -85,14 +86,13 @@ int main(int argc, char** argv){
 		}else{
 			//error
 		}
-	}else{//approximate search
-
+	}else if(has_edit_option){//approximate search
+		for(string &txt : textfiles){
+			for(string &pat : patterns){
+				run_sellers(txt, pat, max_error);
+			}
+		}
 	}
-
-	// Kmp obj = Kmp("abracadabra", "abra");
-
-	// vector<int> occurrences = obj.run();
-	// obj.print_vec(occurrences);
 	
 	return 0;
 }

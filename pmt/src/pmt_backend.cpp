@@ -58,3 +58,55 @@ void run_kmp(string &txtfile, string &pattern){
 		}
 	}
 }
+
+
+struct Sellers
+{
+	int m, n;
+
+	void sellers(string &txt, string &pat, int maxError){
+		n = txt.length();
+		m = pat.length();
+
+		vector<vector<int>> distance;		
+
+		//keeps only current and previous
+		for(int i = 0; i <= m+1; i++){
+			distance.push_back( vector<int>( 2 ));
+		}
+		
+		for(int i =0; i <=m; i++) 
+			distance[i][0] = i;
+		for(int j =0; j < 2; j++)
+			distance[0][j] = 0;
+
+		for(int j =1; j <=n; j++){
+		
+			int cur_j = j % 2; // current
+			int ant_j = cur_j == 0? 1 : 0; // previous
+			
+			for(int i = 1; i<=m; i++){
+				distance[i][cur_j] = min(distance[i-1][ant_j] + ((pat[i-1] == txt[j-1])? 0 : 1), 
+					min(distance[i][ant_j] + 1, distance[i-1][cur_j] + 1));//sellers algorithm
+			}
+			if(distance[m][cur_j] <= maxError){//found
+				cout << "found " << pat << " in " << txt << endl;
+				break;//only prints line
+			}
+		}
+	}
+};
+
+void run_sellers(string &txtfile, string &pattern, int maxError){
+	ifstream mystream(txtfile);
+	if (!mystream.good())
+	{
+		cout << "Arquivo de texto " << txtfile << " nao existe" << endl;
+	}
+
+	string line;
+	Sellers sellers = Sellers();
+	while(getline(mystream, line)){
+		sellers.sellers(line, pattern, maxError);
+	}
+}
