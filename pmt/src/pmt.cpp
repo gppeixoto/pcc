@@ -1,5 +1,15 @@
 #include "pmt_backend.h"
 
+void help()
+{
+    cout << "Uso: pmt [options] [pattern] textfile [textfile...]" << endl << endl;
+    cout << "-h, --help\t\tEste guia de ajuda" << endl;
+    cout << "-s, --silent\t\tNao imprime os matches na tela - usado para testes" << endl;
+    cout << "-e, --edit n\t\tFaz uma busca aproximada em uma distancia de edicao maxima 'n'" << endl;
+    cout << "-p, --pattern file\tUtiliza todos os padroes em 'file' como entrada" << endl;
+
+    exit(0);
+}
 
 inline vector<string> getTextFiles(const string& pat){
     glob_t glob_result;
@@ -58,7 +68,7 @@ int main(int argc, char** argv){
         	case 'h':
         	case '?':
         	default:
-        		//TODO add help function
+        		help();
         		break;
         }
     }
