@@ -67,7 +67,6 @@ int main(int argc, char** argv){
     	string pat(argv[count_option_num]);
 		patterns.push_back(pat);
     }else{//read patterns from file
-        cout << "read from file" << endl;
     	ifstream infile(pat_file);
 
 		if (!infile.good()){

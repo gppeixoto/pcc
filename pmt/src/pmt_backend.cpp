@@ -22,7 +22,7 @@ struct Kmp
 		}
 	}
 
-	void kmp(string &txt, string &pat){
+	void kmp(string &txt, string &pat, bool silent){
 		occ.clear();
 		n = txt.length();
 		int i = 0, j = 0;
@@ -33,8 +33,10 @@ struct Kmp
 			i++;
 			j++;
 			if(j==m){
-				occ.push_back(i-j);
-				j = back[j];
+				if(!silent) cout << txt << endl;
+				return;
+				// occ.push_back(i-j);
+				// j = back[j];
 			}
 		}
 	}
@@ -52,12 +54,7 @@ void run_kmp(string &txtfile, string &pattern, bool silent){
 	Kmp kmp = Kmp();
 	kmp.preprocess(pattern);
 	while(getline(mystream, line)){
-		kmp.kmp(line, pattern);
-		if(!silent){
-			for(int &pos : kmp.occ){
-				cout << line << ":" << pos << endl;
-			}
-		}
+		kmp.kmp(line, pattern, silent);
 	}
 }
 
@@ -154,9 +151,8 @@ struct AhoCorasick
 	    build_fail();
 	}
 
-	v_psi aho_corasick(const string &text) {
+	void aho_corasick(const string &text, bool silent) {
 	    int cur = START;
-	    v_psi occs;
 	    for (unsigned long i=0; i < text.length(); ++i)
 	    {
 	        int a = text[i] - MIN_CHAR;
@@ -167,20 +163,9 @@ struct AhoCorasick
 	        set<string>::iterator it = occ[cur].begin();
 	        while (it != occ[cur].end())
 	        {
-	            occs.push_back(psi(*it, i-(*it).length()+1));
-	            ++it;
+	            if(!silent) cout << text << endl;
+	            return;
 	        }
-	    }
-	    return occs;
-	}
-
-	void print_results(const v_psi &occs, const string &text) {
-	    if (occs.size() > 0) for (psi pat_pos : occs)
-	    {
-	    	cout << "### MATCH ###" << endl;
-	    	cout << text << endl;
-	        cout << "\t" << pat_pos.first << " " << pat_pos.second << endl;
-	        cout << "### MATCH ###" << endl << endl;
 	    }
 	}
 };
@@ -197,8 +182,7 @@ void run_aho(string &txtfile, vs &patterns, bool silent){
 	AhoCorasick aho = AhoCorasick();
 	aho.build_fsm(patterns);
 	while(getline(mystream, line)){
-		v_psi v = aho.aho_corasick(line);
-		if(!silent) aho.print_results(v, line);
+		aho.aho_corasick(line, silent);
 	}
 }
 
@@ -232,7 +216,7 @@ struct Sellers
 					min(distance[i][ant_j] + 1, distance[i-1][cur_j] + 1));//sellers algorithm
 			}
 			if(distance[m][cur_j] <= maxError){//found
-				if(!silent)cout << "found " << pat << " in " << txt << endl;
+				if(!silent)cout << txt << endl;
 				break;//only prints line
 			}
 		}
@@ -270,18 +254,17 @@ struct WuManber
 	void wuManber(string &txt, string &pat, int err, bool silent){
 		int n = txt.size();
 		int m = pat.size();
-		bool found = false;
 		//generate S
 		ull S[err+1];
 		for (int i = 0; i <= err; ++i){
 			S[i] = (~0) << i;
 		}
-		for (int j = 0; j < n && !found; ++j){
+		for (int j = 0; j < n; ++j){
 			ull msk = char_mask[(int)txt[j]];
 			ull old = S[0],tmp;
 			S[0] |= msk;
 			S[0] <<= 1;//shift or
-			for (int q = 1; q <= err && !found; ++q){
+			for (int q = 1; q <= err; ++q){
 				tmp = S[q];
 				//S[q] = (old & (S[q] | msk)) << 1;
 				S[q] = 	((S[q] | msk) << 1)
@@ -292,7 +275,7 @@ struct WuManber
 				if(!(S[err] & (1UL << m))){//most significant bit is 0 
 					//found
 					if(!silent) cout << txt << endl;
-					found = true;
+					return;
 				}
 			}
 		}
