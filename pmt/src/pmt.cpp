@@ -103,7 +103,11 @@ int main(int argc, char** argv){
 	}else if(has_edit_option){//approximate search
 		for(string &txt : textfiles){
 			for(string &pat : patterns){
-				run_sellers(txt, pat, max_error);
+                if(pat.length() < 64){
+                    run_wu_manber(txt, pat, max_error);
+                }else{
+				    run_sellers(txt, pat, max_error);
+                }
 			}
 		}
 	}

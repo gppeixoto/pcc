@@ -24,6 +24,7 @@
 #define MAX_CHAR 126
 #define SIZE MAX_CHAR - MIN_CHAR
 #define MAX_ST 30
+#define CHECK_BIT(var,pos) ((var) & (1LL<<(pos)))
 
 #define ALPHABET_SIZE 			256
 
@@ -33,9 +34,11 @@ typedef vector<string> vs;
 typedef vector<int> vi;
 typedef pair<string, int> psi;
 typedef vector<psi> v_psi;
+typedef unsigned long long ull;
 
 void run_kmp(string &txtfile, string &pattern);
 void run_sellers(string &txtfile, string &pattern, int maxError);
 void run_aho(string &txtfile, vs &patterns);
+void run_wu_manber(string &txtfile, string &pattern, int maxError);
 
 #endif

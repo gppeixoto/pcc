@@ -262,3 +262,65 @@ void run_sellers(string &txtfile, string &pattern, int maxError){
 		sellers.sellers(line, pattern, maxError);
 	}
 }
+
+struct WuManber
+{
+	ull char_mask[ALPHABET_SIZE];
+
+	void initCharMask(string &pat){
+		int m = pat.size();
+		for (int i = 0; i < ALPHABET_SIZE; ++i){
+			char_mask[i] = ~0;
+		}
+		for (int i = 0; i < m; ++i){
+			char_mask[(int)pat[i]] &= ~(1 << i);//clear ith bit
+		}
+	}
+
+	void wuManber(string &txt, string &pat, int err){
+		int n = txt.size();
+		int m = pat.size();
+		bool found = false;
+		//generate S
+		ull S[err+1];
+		for (int i = 0; i <= err; ++i){
+			S[i] = (~0) << i;
+		}
+		for (int j = 0; j < n && !found; ++j){
+			ull msk = char_mask[(int)txt[j]];
+			ull old = S[0],tmp;
+			S[0] |= msk;
+			S[0] <<= 1;//shift or
+			for (int q = 1; q <= err && !found; ++q){
+				tmp = S[q];
+				//S[q] = (old & (S[q] | msk)) << 1;
+				S[q] = 	((S[q] | msk) << 1)
+						& (old << 1)
+						& (S[q-1] << 1)
+						& old;
+				old = tmp;
+				if(!(S[err] & (1UL << m))){//most significant bit is 0 
+					//found
+					cout << txt << endl;
+					found = true;
+				}
+			}
+		}
+	}
+
+};
+
+void run_wu_manber(string &txtfile, string &pattern, int maxError){
+	ifstream mystream(txtfile);
+	if (!mystream.good())
+	{
+		cout << "Arquivo de texto " << txtfile << " nao existe" << endl;
+	}
+
+	string line;
+	WuManber wu = WuManber();
+	wu.initCharMask(pattern);
+	while(getline(mystream, line)){
+		wu.wuManber(line, pattern, maxError);
+	}
+}
