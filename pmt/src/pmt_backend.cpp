@@ -41,7 +41,7 @@ struct Kmp
 
 };
 
-void run_kmp(string &txtfile, string &pattern){
+void run_kmp(string &txtfile, string &pattern, bool silent){
 	ifstream mystream(txtfile);
 	if (!mystream.good())
 	{
@@ -53,8 +53,10 @@ void run_kmp(string &txtfile, string &pattern){
 	kmp.preprocess(pattern);
 	while(getline(mystream, line)){
 		kmp.kmp(line, pattern);
-		for(int &pos : kmp.occ){
-			cout << line << ":" << pos << endl;
+		if(!silent){
+			for(int &pos : kmp.occ){
+				cout << line << ":" << pos << endl;
+			}
 		}
 	}
 }
@@ -173,18 +175,6 @@ struct AhoCorasick
 	}
 
 	void print_results(const v_psi &occs, const string &text) {
-	    // for (unsigned long i=0; i < text.length(); ++i)
-	    // {
-	    //     string prt = ((i/10)>0 && i%10==0) ? to_string(char(i/10)) : " ";
-	    //     cout << prt;
-	    // }
-	    // cout << endl;
-
-	    // for (unsigned long i=0; i < text.length(); ++i)
-	    //     cout << i%10;
-	    
-	    // cout << endl;
-	    // cout << text << endl << endl;
 	    if (occs.size() > 0) for (psi pat_pos : occs)
 	    {
 	    	cout << "### MATCH ###" << endl;
@@ -196,7 +186,7 @@ struct AhoCorasick
 };
 
 
-void run_aho(string &txtfile, vs &patterns){
+void run_aho(string &txtfile, vs &patterns, bool silent){
 	ifstream mystream(txtfile);
 	if (!mystream.good())
 	{
@@ -208,7 +198,7 @@ void run_aho(string &txtfile, vs &patterns){
 	aho.build_fsm(patterns);
 	while(getline(mystream, line)){
 		v_psi v = aho.aho_corasick(line);
-		aho.print_results(v, line);
+		if(!silent) aho.print_results(v, line);
 	}
 }
 
@@ -216,7 +206,7 @@ struct Sellers
 {
 	int m, n;
 
-	void sellers(string &txt, string &pat, int maxError){
+	void sellers(string &txt, string &pat, int maxError, bool silent){
 		n = txt.length();
 		m = pat.length();
 
@@ -242,14 +232,14 @@ struct Sellers
 					min(distance[i][ant_j] + 1, distance[i-1][cur_j] + 1));//sellers algorithm
 			}
 			if(distance[m][cur_j] <= maxError){//found
-				cout << "found " << pat << " in " << txt << endl;
+				if(!silent)cout << "found " << pat << " in " << txt << endl;
 				break;//only prints line
 			}
 		}
 	}
 };
 
-void run_sellers(string &txtfile, string &pattern, int maxError){
+void run_sellers(string &txtfile, string &pattern, int maxError, bool silent){
 	ifstream mystream(txtfile);
 	if (!mystream.good())
 	{
@@ -259,7 +249,7 @@ void run_sellers(string &txtfile, string &pattern, int maxError){
 	string line;
 	Sellers sellers = Sellers();
 	while(getline(mystream, line)){
-		sellers.sellers(line, pattern, maxError);
+		sellers.sellers(line, pattern, maxError, silent);
 	}
 }
 
@@ -277,7 +267,7 @@ struct WuManber
 		}
 	}
 
-	void wuManber(string &txt, string &pat, int err){
+	void wuManber(string &txt, string &pat, int err, bool silent){
 		int n = txt.size();
 		int m = pat.size();
 		bool found = false;
@@ -301,7 +291,7 @@ struct WuManber
 				old = tmp;
 				if(!(S[err] & (1UL << m))){//most significant bit is 0 
 					//found
-					cout << txt << endl;
+					if(!silent) cout << txt << endl;
 					found = true;
 				}
 			}
@@ -310,7 +300,7 @@ struct WuManber
 
 };
 
-void run_wu_manber(string &txtfile, string &pattern, int maxError){
+void run_wu_manber(string &txtfile, string &pattern, int maxError, bool silent){
 	ifstream mystream(txtfile);
 	if (!mystream.good())
 	{
@@ -321,6 +311,6 @@ void run_wu_manber(string &txtfile, string &pattern, int maxError){
 	WuManber wu = WuManber();
 	wu.initCharMask(pattern);
 	while(getline(mystream, line)){
-		wu.wuManber(line, pattern, maxError);
+		wu.wuManber(line, pattern, maxError, silent);
 	}
 }

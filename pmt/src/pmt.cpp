@@ -16,6 +16,7 @@ int main(int argc, char** argv){
 	int c;
 	bool has_edit_option = false;
 	bool has_pattern_file_option = false;
+    bool silent = false;
 	int count_option_num = 0;//count number of arguments
 
 	int max_error = 0;//maximum edit distance allowed
@@ -27,14 +28,15 @@ int main(int argc, char** argv){
   	while (1){
         static struct option long_options[] =
 		{
-          {"help",     no_argument,       0, 'h'},
-          {"edit",     required_argument, 0, 'e'},
-          {"pattern",  required_argument, 0, 'p'},
-          {0, 0, 0, 0}
+            {"silent",   no_argument,       0, 's'},
+            {"help",     no_argument,       0, 'h'},
+            {"edit",     required_argument, 0, 'e'},
+            {"pattern",  required_argument, 0, 'p'},
+            {0, 0, 0, 0}
         };
         int option_index = 0;
 
-        c = getopt_long (argc, argv, "he:p:",long_options, &option_index);
+        c = getopt_long (argc, argv, "she:p:",long_options, &option_index);
 
         if (c == -1)//end
         	break;
@@ -50,6 +52,9 @@ int main(int argc, char** argv){
         		pat_file = optarg;
         		count_option_num += 2;
         		break;
+            case 's':
+                silent = true;
+                break;
         	case 'h':
         	case '?':
         	default:
@@ -91,11 +96,11 @@ int main(int argc, char** argv){
 		if(patterns.size() == 1){//kmp
 			string pat = patterns[0];
 			for(string &txt : textfiles){
-				run_kmp(txt, pat);
+				run_kmp(txt, pat, silent);
 			}
 		}else if(patterns.size() > 1){//aho
 			for(string &txt : textfiles){
-				run_aho(txt, patterns);
+				run_aho(txt, patterns, silent);
 			}
 		}else{
 			//error
@@ -104,9 +109,9 @@ int main(int argc, char** argv){
 		for(string &txt : textfiles){
 			for(string &pat : patterns){
                 if(pat.length() < 64){
-                    run_wu_manber(txt, pat, max_error);
+                    run_wu_manber(txt, pat, max_error, silent);
                 }else{
-				    run_sellers(txt, pat, max_error);
+				    run_sellers(txt, pat, max_error, silent);
                 }
 			}
 		}

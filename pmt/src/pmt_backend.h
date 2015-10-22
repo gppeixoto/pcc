@@ -36,9 +36,9 @@ typedef pair<string, int> psi;
 typedef vector<psi> v_psi;
 typedef unsigned long long ull;
 
-void run_kmp(string &txtfile, string &pattern);
-void run_sellers(string &txtfile, string &pattern, int maxError);
-void run_aho(string &txtfile, vs &patterns);
-void run_wu_manber(string &txtfile, string &pattern, int maxError);
+void run_kmp(string &txtfile, string &pattern, bool silent);
+void run_sellers(string &txtfile, string &pattern, int maxError, bool silent);
+void run_aho(string &txtfile, vs &patterns, bool silent);
+void run_wu_manber(string &txtfile, string &pattern, int maxError, bool silent);
 
 #endif
