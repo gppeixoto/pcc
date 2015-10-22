@@ -61,17 +61,24 @@ void run_kmp(string &txtfile, string &pattern){
 
 struct AhoCorasick
 {
-	int fail[MAX_ST];
-	int go_to[MAX_ST][SIZE];
-	set<string> occ[MAX_ST];
+	vector<int> fail; //[max_st]
+	vector<vector<int>> go_to; //[max_st][size]
+	vector<set<string>> occ; //[max_st]
 
 	void build_goto(const vs &patterns) {
-	    memset(go_to, FAIL, sizeof go_to);
+	    //memset(go_to, FAIL, sizeof go_to);
+	    for (unsigned long i=0; i < go_to.size(); ++i) {
+	    	go_to[i].resize(SIZE);
+	    	for (unsigned long j = 0; j < go_to[i].size(); ++j) {
+	    		go_to[i][j] = FAIL;
+	    	}
+	    }
+
 	    int newstate = START;
 	    for (string pat : patterns)
 	    {
 	        int state = START;
-	        int j = 0;
+	        unsigned long j = 0;
 	        int pat_j = pat[j] - MIN_CHAR;
 
 	        while (j < pat.length() && go_to[state][pat_j] != FAIL)
@@ -97,7 +104,7 @@ struct AhoCorasick
 	            go_to[START][a] = START;
 	}
 
-	void build_fail(const vs &patterns) {
+	void build_fail() {
 	    queue<int> q;
 	    for (int a=0; a < SIZE; ++a)
 	    {
@@ -131,14 +138,24 @@ struct AhoCorasick
 	}
 
 	void build_fsm(const vs &patterns) {
+		int sz = 0;
+		for (auto pat : patterns) {
+			sz += pat.size();
+		} sz += 50;
+		fail.resize(sz);
+		go_to.resize(sz);
+		for (auto vec : go_to) {
+			vec.resize(SIZE);
+		}
+		occ.resize(sz);
 	    build_goto(patterns);
-	    build_fail(patterns);
+	    build_fail();
 	}
 
-	v_psi aho_corasick(const vs &patterns, const string &text) {
+	v_psi aho_corasick(const string &text) {
 	    int cur = START;
 	    v_psi occs;
-	    for (int i=0; i < text.length(); ++i)
+	    for (unsigned long i=0; i < text.length(); ++i)
 	    {
 	        int a = text[i] - MIN_CHAR;
 	        while (go_to[cur][a] == FAIL){
@@ -156,21 +173,24 @@ struct AhoCorasick
 	}
 
 	void print_results(const v_psi &occs, const string &text) {
-	    for (int i=0; i < text.length(); ++i)
-	    {
-	        string prt = ((i/10)>0 && i%10==0) ? to_string(char(i/10)) : " ";
-	        cout << prt;
-	    }
-	    cout << endl;
+	    // for (unsigned long i=0; i < text.length(); ++i)
+	    // {
+	    //     string prt = ((i/10)>0 && i%10==0) ? to_string(char(i/10)) : " ";
+	    //     cout << prt;
+	    // }
+	    // cout << endl;
 
-	    for (int i=0; i < text.length(); ++i)
-	        cout << i%10;
+	    // for (unsigned long i=0; i < text.length(); ++i)
+	    //     cout << i%10;
 	    
-	    cout << endl;
-	    cout << text << endl << endl;
-	    for (psi pat_pos : occs)
+	    // cout << endl;
+	    // cout << text << endl << endl;
+	    if (occs.size() > 0) for (psi pat_pos : occs)
 	    {
-	        cout << pat_pos.first << " " << pat_pos.second << endl;
+	    	cout << "### MATCH ###" << endl;
+	    	cout << text << endl;
+	        cout << "\t" << pat_pos.first << " " << pat_pos.second << endl;
+	        cout << "### MATCH ###" << endl << endl;
 	    }
 	}
 };
@@ -187,7 +207,7 @@ void run_aho(string &txtfile, vs &patterns){
 	AhoCorasick aho = AhoCorasick();
 	aho.build_fsm(patterns);
 	while(getline(mystream, line)){
-		v_psi v = aho.aho_corasick(patterns, line);
+		v_psi v = aho.aho_corasick(line);
 		aho.print_results(v, line);
 	}
 }
